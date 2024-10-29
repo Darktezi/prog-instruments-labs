@@ -271,7 +271,7 @@ def searchGlobal(sSearchText=False):
     total = len(oGui.searchResults)
     dialog = xbmcgui.DialogProgress()
     dialog.create(cConfig().getLocalizedString(30126), cConfig().getLocalizedString(30127))
-    for count, result in enumerate(sorted(oGui.searchResults, key=lambda k: k['guiElement'].getSiteName()), 1):
+    for count, result in enumerate(sorted(oGui.searchResults, key = lambda k: k['guiElement'].getSiteName()), 1):
         if dialog.iscanceled(): return
         oGui.addFolder(result['guiElement'], result['params'], bIsFolder=result['isFolder'], iTotal=total)
         dialog.update(count * 100 // total, str(count) + cConfig().getLocalizedString(30128) + str(total) + ': ' + result['guiElement'].getTitle())
@@ -347,7 +347,7 @@ def searchTMDB(params):
         dialog.update((count + 1) * 50 // numPlugins, cConfig().getLocalizedString(30124) + str(pluginEntry['name']) + '...')
         log(LOGMESSAGE + ' -> [MatrixV2]: Searching for %s at %s' % (sSearchText, pluginEntry['id']), LOGNOTICE)
 
-        t = threading.Thread(target=_pluginSearch, args=(pluginEntry, sSearchText, oGui), name=pluginEntry['name'])
+        t = threading.Thread(target = _pluginSearch, args = (pluginEntry, sSearchText, oGui), name = pluginEntry['name'])
         threads += [t]
         t.start()
     for count, t in enumerate(threads):
