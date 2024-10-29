@@ -2,6 +2,7 @@
 # Python 3
 import os
 import traceback
+from typing import Union, Dict, Tuple
 import threading
 
 import xbmc
@@ -32,7 +33,7 @@ except ImportError:
     # Resolver Fehlermeldung (bei defekten oder nicht installierten Resolver)
     xbmcgui.Dialog().ok(cConfig().getLocalizedString(30119), cConfig().getLocalizedString(30120))
 
-def viewInfo(params):
+def viewInfo(params: ParameterHandler) -> None:
     parms = ParameterHandler()
     sCleanTitle = params.getValue('searchTitle')
     sMeta = parms.getValue('sMeta')
@@ -40,7 +41,7 @@ def viewInfo(params):
     WindowsBoxes(sCleanTitle, sCleanTitle, sMeta, sYear)
 
 
-def parseUrl():
+def parseUrl() -> None:
     params = ParameterHandler()
     logger.info(params.getAllParameters())
     # If no function is set, we set it to the default "load" function
@@ -142,7 +143,7 @@ def parseUrl():
         function()
 
 
-def showMainMenu(sFunction):
+def showMainMenu(sFunction: str) -> None:
     oGui = cGui()
     # Setzte die globale Suche an erste Stelle
     if cConfig().getSetting('GlobalSearchPosition') == 'true':
@@ -181,7 +182,7 @@ def showMainMenu(sFunction):
     oGui.setEndOfDirectory()
 
 
-def settingsGuiElements():
+def settingsGuiElements() -> Tuple[cGuiElement, cGuiElement, cGuiElement, cGuiElement]:
 
     # GUI Plugin Informationen
     oGuiElement = cGuiElement()
@@ -218,7 +219,7 @@ def settingsGuiElements():
     return PluginInfo, Matrixv2Settings, resolveurlSettings, DevUpdateMan
 
 
-def globalSearchGuiElement():
+def globalSearchGuiElement() -> cGuiElement:
     # Create a gui element for global search
     oGuiElement = cGuiElement()
     oGuiElement.setTitle(cConfig().getLocalizedString(30040))
@@ -228,14 +229,14 @@ def globalSearchGuiElement():
     return oGuiElement
 
 
-def showHosterGui(sFunction):
+def showHosterGui(sFunction: str) -> bool:
     oHosterGui = cHosterGui()
     function = getattr(oHosterGui, sFunction)
     function()
     return True
 
 
-def searchGlobal(sSearchText=False):
+def searchGlobal(sSearchText: Union[str, bool] = False) -> bool:
     oGui = cGui()
     oGui.globalSearch = True
     oGui._collectMode = True
@@ -278,7 +279,7 @@ def searchGlobal(sSearchText=False):
     return True
 
 
-def searchAlternative(params):
+def searchAlternative(params: ParameterHandler) -> bool:
     searchTitle = params.getValue('searchTitle')
     searchImdbId = params.getValue('searchImdbID')
     searchYear = params.getValue('searchYear')
@@ -323,7 +324,7 @@ def searchAlternative(params):
     return True
 
 
-def searchTMDB(params):
+def searchTMDB(params: ParameterHandler) -> bool:
     sSearchText = params.getValue('searchTitle')
     oGui = cGui()
     oGui.globalSearch = True
@@ -365,7 +366,7 @@ def searchTMDB(params):
     return True
 
 
-def _pluginSearch(pluginEntry, sSearchText, oGui):
+def _pluginSearch(pluginEntry: Dict[str, str], sSearchText: str, oGui: cGuiElement) -> None:
     try:
         plugin = __import__(pluginEntry['id'], globals(), locals())
         function = getattr(plugin, '_search')
