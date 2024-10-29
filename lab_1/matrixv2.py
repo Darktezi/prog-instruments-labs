@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # Python 3
 import os
+import traceback
+import threading
 
 import xbmc
 import xbmcgui
@@ -8,13 +10,18 @@ import xbmcaddon
 
 from xbmcaddon import Addon
 from xbmc import LOGINFO as LOGNOTICE, LOGERROR, log
+
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.handler.pluginHandler import cPluginHandler
 from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.gui.gui import cGui
+from resources.lib.gui.hoster import cHosterGui
+from resources.lib.tmdbinfo import WindowsBoxes
 from resources.lib.config import cConfig
 from resources.lib.tools import logger
+from resources.lib import updateManager
+from resources.lib.tools import cPluginInfo, tools
 
 PATH = xbmcaddon.Addon().getAddonInfo('path')
 ART = os.path.join(PATH, 'resources', 'art')
@@ -26,7 +33,6 @@ except ImportError:
     xbmcgui.Dialog().ok(cConfig().getLocalizedString(30119), cConfig().getLocalizedString(30120))
 
 def viewInfo(params):
-    from resources.lib.tmdbinfo import WindowsBoxes
     parms = ParameterHandler()
     sCleanTitle = params.getValue('searchTitle')
     sMeta = parms.getValue('sMeta')
@@ -48,22 +54,19 @@ def parseUrl():
         elif sFunction == 'viewInfo':
             viewInfo(params)
             return
-        elif sFunction == 'searchAlter':
-            searchAlter(params)
+        elif sFunction == 'searchAlternative':
+            searchAlternative(params)
             return
         elif sFunction == 'searchTMDB':
             searchTMDB(params)
             return
         elif sFunction == 'devUpdates':
-            from resources.lib import updateManager
             updateManager.devUpdates()
             return
         elif sFunction == 'pluginInfo':
-            from resources.lib.tools import cPluginInfo
             cPluginInfo().pluginInfo()
             return
         elif sFunction == 'changelog':
-            from resources.lib import tools
             Addon().setSetting('changelog_version', '')
             tools.changelog()
             return
@@ -89,7 +92,6 @@ def parseUrl():
         return
     sSiteName = params.getValue('site')
     if params.exist('playMode'):
-        from resources.lib.gui.hoster import cHosterGui
         url = False
         playMode = params.getValue('playMode')
         isHoster = params.getValue('isHoster')
@@ -120,15 +122,12 @@ def parseUrl():
         resolver.display_settings()
     # Manuelles Update im Hauptmenü
     elif sSiteName == 'devUpdates':
-        from resources.lib import updateManager
         updateManager.devUpdates()
     # Plugin Infos    
     elif sSiteName == 'pluginInfo':
-        from resources.lib.tools import cPluginInfo
         cPluginInfo().pluginInfo()
     # Changelog anzeigen    
     elif sSiteName == 'changelog':
-        from resources.lib import tools
         tools.changelog()
     # Unterordner der Einstellungen   
     elif sSiteName == 'settings':
@@ -230,7 +229,6 @@ def globalSearchGuiElement():
 
 
 def showHosterGui(sFunction):
-    from resources.lib.gui.hoster import cHosterGui
     oHosterGui = cHosterGui()
     function = getattr(oHosterGui, sFunction)
     function()
@@ -238,7 +236,6 @@ def showHosterGui(sFunction):
 
 
 def searchGlobal(sSearchText=False):
-    import threading
     oGui = cGui()
     oGui.globalSearch = True
     oGui._collectMode = True
@@ -285,7 +282,6 @@ def searchAlternative(params):
     searchTitle = params.getValue('searchTitle')
     searchImdbId = params.getValue('searchImdbID')
     searchYear = params.getValue('searchYear')
-    import threading
     oGui = cGui()
     oGui.globalSearch = True
     oGui._collectMode = True
@@ -329,7 +325,6 @@ def searchAlternative(params):
 
 def searchTMDB(params):
     sSearchText = params.getValue('searchTitle')
-    import threading
     oGui = cGui()
     oGui.globalSearch = True
     oGui._collectMode = True
@@ -377,5 +372,4 @@ def _pluginSearch(pluginEntry, sSearchText, oGui):
         function(oGui, sSearchText)
     except Exception:
         log(LOGMESSAGE + ' -> [MatrixV2]: ' + pluginEntry['name'] + ': search failed', LOGERROR)
-        import traceback
         log(traceback.format_exc())
