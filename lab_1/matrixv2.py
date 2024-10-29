@@ -34,6 +34,15 @@ except ImportError:
     xbmcgui.Dialog().ok(cConfig().getLocalizedString(30119), cConfig().getLocalizedString(30120))
 
 def viewInfo(params: ParameterHandler) -> None:
+    """
+    Displays additional information about an item, such as metadata and year.
+
+    Args:
+        params (ParameterHandler): The handler containing parameters for the item to display.
+
+    Returns:
+        None
+    """
     parms = ParameterHandler()
     sCleanTitle = params.getValue('searchTitle')
     sMeta = parms.getValue('sMeta')
@@ -42,6 +51,15 @@ def viewInfo(params: ParameterHandler) -> None:
 
 
 def parseUrl() -> None:
+    """
+    Parses the URL parameters and determines the action to perform based on the 'function' parameter.
+
+    This function serves as the main entry point to various features, such as loading main menus,
+    playing remote URLs, managing cache, viewing item info, and running global or alternative searches.
+
+    Returns:
+        None
+    """
     params = ParameterHandler()
     logger.info(params.getAllParameters())
     # If no function is set, we set it to the default "load" function
@@ -144,6 +162,20 @@ def parseUrl() -> None:
 
 
 def showMainMenu(sFunction: str) -> None:
+    """
+    Displays the main menu by creating GUI elements for each plugin and additional settings.
+
+    The function first adds a global search element if enabled in settings, then retrieves
+    and displays all available plugins, sorted by ID. If no plugins are enabled, it opens the
+    settings menu. If "Global Search Position" or "Settings Folder" settings are enabled, it
+    adds respective elements to the GUI menu.
+
+    Args:
+        sFunction (str): The name of the function to be used when setting up each plugin’s GUI element.
+
+    Returns:
+        None
+    """
     oGui = cGui()
     # Setzte die globale Suche an erste Stelle
     if cConfig().getSetting('GlobalSearchPosition') == 'true':
@@ -183,6 +215,17 @@ def showMainMenu(sFunction: str) -> None:
 
 
 def settingsGuiElements() -> Tuple[cGuiElement, cGuiElement, cGuiElement, cGuiElement]:
+    """
+    Creates GUI elements for settings categories like plugin information, main settings, 
+    resolver settings, and developer update manager.
+
+    Each element is configured with a title, function, and thumbnail icon, returning a tuple of
+    elements to be added to the GUI.
+
+    Returns:
+        Tuple[cGuiElement, cGuiElement, cGuiElement, cGuiElement]: A tuple containing GUI elements
+        for plugin info, main settings, resolver settings, and developer update manager.
+    """
 
     # GUI Plugin Informationen
     oGuiElement = cGuiElement()
@@ -220,7 +263,15 @@ def settingsGuiElements() -> Tuple[cGuiElement, cGuiElement, cGuiElement, cGuiEl
 
 
 def globalSearchGuiElement() -> cGuiElement:
-    # Create a gui element for global search
+    """
+    Creates a GUI element for the global search functionality.
+
+    This function initializes a GUI element specifically for the global search feature,
+    setting its title, site name, function, and thumbnail image.
+
+    Returns:
+        cGuiElement: A configured GUI element for global search.
+    """
     oGuiElement = cGuiElement()
     oGuiElement.setTitle(cConfig().getLocalizedString(30040))
     oGuiElement.setSiteName('globalSearch')
@@ -230,6 +281,17 @@ def globalSearchGuiElement() -> cGuiElement:
 
 
 def showHosterGui(sFunction: str) -> bool:
+    """
+    Displays the hoster GUI and calls a specific function.
+
+    This function retrieves the hoster GUI and calls the specified function from it.
+
+    Args:
+        sFunction (str): The name of the function to be called on the hoster GUI.
+
+    Returns:
+        bool: Always returns True after executing the function.
+    """
     oHosterGui = cHosterGui()
     function = getattr(oHosterGui, sFunction)
     function()
@@ -237,6 +299,19 @@ def showHosterGui(sFunction: str) -> bool:
 
 
 def searchGlobal(sSearchText: Union[str, bool] = False) -> bool:
+    """
+    Performs a global search using available plugins.
+
+    If no search text is provided, it prompts the user for input. The function retrieves
+    available plugins that support global search and executes a search in parallel threads.
+    The results are collected and displayed in the GUI.
+
+    Args:
+        sSearchText (Union[str, bool], optional): The text to search for. Defaults to False.
+
+    Returns:
+        bool: Always returns True after executing the search.
+    """
     oGui = cGui()
     oGui.globalSearch = True
     oGui._collectMode = True
@@ -280,6 +355,19 @@ def searchGlobal(sSearchText: Union[str, bool] = False) -> bool:
 
 
 def searchAlternative(params: ParameterHandler) -> bool:
+    """
+    Searches for alternative media options based on provided parameters.
+
+    This function retrieves the search title, IMDb ID, and year from the parameters,
+    then executes a search using available plugins. The results are filtered based on
+    the search criteria and displayed in the GUI.
+
+    Args:
+        params (ParameterHandler): The parameters containing search details.
+
+    Returns:
+        bool: Always returns True after executing the search.
+    """
     searchTitle = params.getValue('searchTitle')
     searchImdbId = params.getValue('searchImdbID')
     searchYear = params.getValue('searchYear')
@@ -325,6 +413,18 @@ def searchAlternative(params: ParameterHandler) -> bool:
 
 
 def searchTMDB(params: ParameterHandler) -> bool:
+    """
+    Searches for media using The Movie Database (TMDB) based on provided parameters.
+
+    This function retrieves the search title from the parameters and executes a search
+    using available plugins that support global search. The results are displayed in the GUI.
+
+    Args:
+        params (ParameterHandler): The parameters containing search details.
+
+    Returns:
+        bool: Always returns True after executing the search.
+    """
     sSearchText = params.getValue('searchTitle')
     oGui = cGui()
     oGui.globalSearch = True
@@ -367,6 +467,20 @@ def searchTMDB(params: ParameterHandler) -> bool:
 
 
 def _pluginSearch(pluginEntry: Dict[str, str], sSearchText: str, oGui: cGuiElement) -> None:
+    """
+    Executes a search using a specific plugin.
+
+    This function imports the specified plugin and calls its search function, handling
+    any exceptions that may occur during the search.
+
+    Args:
+        pluginEntry (Dict[str, str]): The entry for the plugin containing its ID and other details.
+        sSearchText (str): The search text to be used.
+        oGui (cGuiElement): The GUI element to display results.
+
+    Returns:
+        None
+    """
     try:
         plugin = __import__(pluginEntry['id'], globals(), locals())
         function = getattr(plugin, '_search')
