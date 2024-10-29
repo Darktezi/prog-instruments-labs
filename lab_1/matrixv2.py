@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 # Python 3
+import os
 
 import xbmc
 import xbmcgui
 import xbmcaddon
-import os
 
 from xbmcaddon import Addon
+from xbmc import LOGINFO as LOGNOTICE, LOGERROR, log
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.handler.pluginHandler import cPluginHandler
-from xbmc import LOGINFO as LOGNOTICE, LOGERROR, LOGWARNING, log
 from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.gui.gui import cGui
 from resources.lib.config import cConfig
