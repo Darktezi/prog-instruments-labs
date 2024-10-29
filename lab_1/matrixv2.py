@@ -2,8 +2,8 @@
 # Python 3
 import os
 import traceback
-from typing import Union, Dict, Tuple
 import threading
+from typing import Union, Dict, Tuple
 
 import xbmc
 import xbmcgui
@@ -37,6 +37,7 @@ except ImportError:
         cConfig().getLocalizedString(30120)
     )
 
+
 def viewInfo(params: ParameterHandler) -> None:
     """
     Displays additional information about an item, such as metadata and year.
@@ -52,6 +53,7 @@ def viewInfo(params: ParameterHandler) -> None:
     sMeta = parms.getValue('sMeta')
     sYear = parms.getValue('sYear')
     WindowsBoxes(sCleanTitle, sCleanTitle, sMeta, sYear)
+
 
 def parseUrl() -> None:
     """
