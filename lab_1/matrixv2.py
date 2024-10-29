@@ -318,7 +318,6 @@ def searchGlobal(sSearchText: Union[str, bool] = False) -> bool:
     if not sSearchText:
         sSearchText = oGui.showKeyBoard()
     if not sSearchText: return True
-    aPlugins = []
     aPlugins = cPluginHandler().getAvailablePlugins()
     dialog = xbmcgui.DialogProgress()
     dialog.create(cConfig().getLocalizedString(30122), cConfig().getLocalizedString(30123))
