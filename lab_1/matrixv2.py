@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 # Python 3
 
-import sys
 import xbmc
 import xbmcgui
 import xbmcaddon
 import os
-import zlib
-import base64
 
 from xbmcaddon import Addon
 from resources.lib.handler.ParameterHandler import ParameterHandler
