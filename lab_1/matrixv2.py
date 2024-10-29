@@ -281,7 +281,7 @@ def searchGlobal(sSearchText=False):
     return True
 
 
-def searchAlter(params):
+def searchAlternative(params):
     searchTitle = params.getValue('searchTitle')
     searchImdbId = params.getValue('searchImdbID')
     searchYear = params.getValue('searchYear')
